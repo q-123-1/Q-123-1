@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>广府古城文化导览</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600;700&display=swap');
+
+    :root {
+      font-family: 'Noto Serif SC', 'SimSun', serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #fef3c7, #fcd34d);
+    }
+
+    .header {
+      background: linear-gradient(to bottom, #78350f, #92400e);
+      color: #fef3c7;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header h1 {
+      font-family: 'Ma Shan Zheng', serif;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+    }
+
+    .header p {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .breadcrumb {
+      background: rgba(0, 0, 0, 0.05);
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      color: #78350f;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .breadcrumb a {
+      color: #78350f;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .breadcrumb span {
+      color: #92400e;
+    }
+
+    .page {
+      display: none;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .hero {
+      position: relative;
+      height: 500px;
+      background: url('https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=1200') center/cover;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      border-radius: 1rem;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.7));
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .hero h2 {
+      font-family: 'Ma Shan Zheng', serif;
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+      font-family: 'Ma Shan Zheng', serif;
+      font-size: 2.5rem;
+      color: #78350f;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .page-description {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+      color: #4b5563;
+      line-height: 1.8;
+      font-size: 1rem;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .card .icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .card h3 {
+      font-family: 'Ma Shan Zheng', serif;
+      font-size: 1.5rem;
+      color: #78350f;
+      margin-bottom: 1rem;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .card .tag {
+      display: inline-block;
+      background: #fbbf24;
+      color: #78350f;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+    }
+
+    .content-section {
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .content-section h3 {
+      font-family: 'Ma Shan Zheng', serif;
+      font-size: 1.8rem;
+      color: #78350f;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .content-item {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    .content-item img {
+      width: 200px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .content-item-text {
+      flex: 1;
+    }
+
+    .content-item-text h4 {
+      font-family: 'Ma Shan Zheng', serif;
+      font-size: 1.3rem;
+      color: #78350f;
+      margin-bottom: 0.75rem;
+    }
+
+    .content-item-text p {
+      color: #4b5563;
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    .content-item-text ul {
+      margin-top: 0.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .content-item-text li {
+      color: #4b5563;
+      line-height: 1.6;
+      margin-bottom: 0.25rem;
+    }
+
+    .status-box {
+      background: #fef3c7;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-top: 1.5rem;
+      border-left: 4px solid #fbbf24;
+    }
+
+    .status-box h5 {
+      font-weight: bold;
+      color: #78350f;
+      margin-bottom: 0.5rem;
+    }
+
+    .status-box p {
+      color: #4b5563;
+      font-size: 0.9rem;
+    }
+
+    .footer {
+      background: #451a03;
+      color: #fef3c7;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .footer p {
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 640px) {
+      .header h1 {
+        font-size: 1.5rem;
+      }
+      .hero {
+        height: 300px;
+      }
+      .hero h2 {
+        font-size: 2rem;
+      }
+      .hero p {
+        font-size: 1rem;
+      }
+      .page {
+        padding: 1rem;
+      }
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+      .content-item {
+        flex-direction: column;
+      }
+      .content-item img {
+        width: 100%;
+        height: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1 onclick="showPage('home')">广府古城</h1>
+    <p>北方水城 · 太极之乡</p>
+  </div>
+
+  <!-- 首页 -->
+  <div id="page-home" class="page active">
+    <div class="hero">
+      <div class="hero-content">
+        <h2>北方水城 · 太极之乡 · 广府古城</h2>
+        <p>千年古城，非遗传承，探索太极圣地</p>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card" onclick="showPage('heritage-main')">
+        <div class="icon">🎭</div>
+        <h3>邯郸广府古城非遗文化</h3>
+        <p>太极圣地、民间艺术之乡，集武学、戏曲、民乐、民俗、饮食非遗于一体</p>
+      </div>
+      <div class="card" onclick="showPage('protection-main')">
+        <div class="icon">🛡️</div>
+        <h3>广府古城保护与传承措施</h3>
+        <p>实体风貌保护、文化非遗传承、规划与长效管理</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 二级导航：邯郸广府古城非遗文化 -->
+  <div id="page-heritage-main" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <span>邯郸广府古城非遗文化</span>
+    </div>
+
+    <h2 class="page-title">邯郸广府古城非遗文化</h2>
+
+    <div class="page-description">
+      广府古城（永年广府）坐拥2项人类非遗、3项国家级非遗、多项省市级非遗，集武学、戏曲、民乐、民俗、饮食非遗于一体，是河北冀南非遗核心聚集地，素有太极圣地、民间艺术之乡之称。
+    </div>
+
+    <div class="card-grid">
+      <div class="card" onclick="showPage('heritage-national')">
+        <div class="icon">🏆</div>
+        <h3>世界级+国家级非遗</h3>
+        <p>杨氏太极拳、武氏太极拳、永年鼓吹乐、永年抬花桌</p>
+        <span class="tag">核心</span>
+      </div>
+      <div class="card" onclick="showPage('heritage-provincial')">
+        <div class="icon">📜</div>
+        <h3>省市级重点非遗</h3>
+        <p>永年西调、正里小曲等地方特色非遗</p>
+      </div>
+      <div class="card" onclick="showPage('heritage-food')">
+        <div class="icon">🍜</div>
+        <h3>传统饮食非遗</h3>
+        <p>广府酥鱼、驴肉灌肠、太极酥糖等特色美食</p>
+        <span class="tag">广府特色</span>
+      </div>
+      <div class="card" onclick="showPage('heritage-status')">
+        <div class="icon">🎭</div>
+        <h3>活态传承现状</h3>
+        <p>展演场景、传习空间、文旅融合</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三级导航：世界级+国家级非遗 -->
+  <div id="page-heritage-national" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
+      <span>›</span>
+      <span>世界级+国家级非遗</span>
+    </div>
+
+    <h2 class="page-title">世界级+国家级非遗（核心）</h2>
+
+    <div class="card-grid">
+      <div class="card" onclick="showPage('taiji')">
+        <div class="icon">☯️</div>
+        <h3>杨氏、武氏太极拳</h3>
+        <p>人类非物质文化遗产（2020年入选联合国名录）</p>
+        <span class="tag">人类非遗</span>
+      </div>
+      <div class="card" onclick="showPage('guchui')">
+        <div class="icon">🎵</div>
+        <h3>永年鼓吹乐（永年吹歌）</h3>
+        <p>第一批国家级非遗（2006）</p>
+        <span class="tag">国家级</span>
+      </div>
+      <div class="card" onclick="showPage('huazhuo')">
+        <div class="icon">🎊</div>
+        <h3>永年抬花桌</h3>
+        <p>第二批国家级非遗（2008）</p>
+        <span class="tag">国家级</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四级导航：杨氏、武氏太极拳 -->
+  <div id="page-taiji" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-national')">世界级+国家级非遗</a>
+      <span>›</span>
+      <span>杨氏、武氏太极拳</span>
+    </div>
+
+    <h2 class="page-title">杨氏、武氏太极拳｜人类非物质文化遗产</h2>
+    <p style="text-align: center; color: #78350f; margin-bottom: 2rem;">2020年入选联合国名录</p>
+
+    <div class="content-section">
+      <div class="content-grid">
+        <div class="content-item">
+          <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400" alt="杨氏太极拳" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E杨氏太极拳%3C/text%3E%3C/svg%3E'" />
+          <div class="content-item-text">
+            <h4>杨氏太极拳（2006首批国遗）</h4>
+            <p>广府杨露禅创立，拳架舒展圆活、柔缓易学，国内24式简化太极以杨式拳架为蓝本，全球练习人数最多。</p>
+            <p style="margin-top: 0.5rem;">城内留存杨露禅故居、太极博物馆，街巷常年全民练拳。</p>
+          </div>
+        </div>
+
+        <div class="content-item">
+          <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400" alt="武氏太极拳" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E武氏太极拳%3C/text%3E%3C/svg%3E'" />
+          <div class="content-item-text">
+            <h4>武氏太极拳（2008二批国遗）</h4>
+            <p>武禹襄始创，拳架紧凑小巧、身法严谨，重内功拳理，传承世家集中在广府城内街巷。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-box">
+        <h5>📍 现状</h5>
+        <p>古城常态化太极展演、太极研学，每年承办国际太极拳大会，本地半数居民习练太极。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四级导航：永年鼓吹乐 -->
+  <div id="page-guchui" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-national')">世界级+国家级非遗</a>
+      <span>›</span>
+      <span>永年鼓吹乐</span>
+    </div>
+
+    <h2 class="page-title">永年鼓吹乐（永年吹歌）｜第一批国家级非遗</h2>
+    <p style="text-align: center; color: #78350f; margin-bottom: 2rem;">2006年入选</p>
+
+    <div class="content-section">
+      <div class="content-item">
+        <img src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=400" alt="永年鼓吹乐" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E永年鼓吹乐%3C/text%3E%3C/svg%3E'" />
+        <div class="content-item-text">
+          <h4>冀南代表性民间吹打乐</h4>
+          <p>分吹奏、打击、咔戏三种表演形式，现存200余首古曲牌，分东、中、南三大流派：</p>
+          <ul>
+            <li><strong>东路：</strong>曲风古朴细腻</li>
+            <li><strong>中路：</strong>擅长模仿鸟兽鸣啼</li>
+            <li><strong>南路：</strong>规整大气</li>
+          </ul>
+          <p style="margin-top: 0.75rem;"><strong>用途：</strong>婚丧嫁娶、庙会节庆、抬花桌伴奏</p>
+          <p><strong>经典曲目：</strong>《小放驴》《一枝花》《抬花轿》</p>
+          <p style="margin-top: 0.75rem; font-weight: bold; color: #78350f;">永年获评中国吹歌艺术之乡</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四级导航：永年抬花桌 -->
+  <div id="page-huazhuo" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-national')">世界级+国家级非遗</a>
+      <span>›</span>
+      <span>永年抬花桌</span>
+    </div>
+
+    <h2 class="page-title">永年抬花桌｜第二批国家级非遗</h2>
+    <p style="text-align: center; color: #78350f; margin-bottom: 2rem;">2008年入选</p>
+
+    <div class="content-section">
+      <div class="content-item">
+        <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400" alt="永年抬花桌" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E永年抬花桌%3C/text%3E%3C/svg%3E'" />
+        <div class="content-item-text">
+          <h4>起源初唐的大型民俗巡游舞蹈</h4>
+          <p>元宵主打展演项目：</p>
+          <ul>
+            <li>实木八仙桌缀满仿真花木，桌重200斤</li>
+            <li>8～16人抬杆巡游，搭配鼓吹乐伴奏</li>
+            <li>舞步含八字步、扭步、换肩抖步</li>
+            <li>全台展演需四五十人协作</li>
+          </ul>
+          <p style="margin-top: 0.75rem; font-weight: bold; color: #78350f;">是广府春节、庙会标志性非遗演艺</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三级导航：省市级重点非遗 -->
+  <div id="page-heritage-provincial" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
+      <span>›</span>
+      <span>省市级重点非遗</span>
+    </div>
+
+    <h2 class="page-title">省市级重点非遗</h2>
+
+    <div class="card-grid">
+      <div class="card" onclick="showPage('xidiao')">
+        <div class="icon">🎭</div>
+        <h3>永年西调</h3>
+        <p>河北省级非遗</p>
+      </div>
+      <div class="card" onclick="showPage('xiaoqu')">
+        <div class="icon">🎵</div>
+        <h3>正里小曲</h3>
+        <p>市级非遗</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四级导航：永年西调 -->
+  <div id="page-xidiao" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-provincial')">省市级重点非遗</a>
+      <span>›</span>
+      <span>永年西调</span>
+    </div>
+
+    <h2 class="page-title">永年西调｜河北省级非遗</h2>
+
+    <div class="content-section">
+      <div class="content-item">
+        <img src="https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=400" alt="永年西调" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E永年西调%3C/text%3E%3C/svg%3E'" />
+        <div class="content-item-text">
+          <h4>地方稀有梆子剧种</h4>
+          <p>俗称"泽州调"，唱腔高亢苍凉，剧目多历史侠义题材。</p>
+          <p style="margin-top: 0.75rem;">古城古戏台常态化定点演出，春节非遗大汇演主力项目。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四级导航：正里小曲 -->
+  <div id="page-xiaoqu" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-provincial')">省市级重点非遗</a>
+      <span>›</span>
+      <span>正里小曲</span>
+    </div>
+
+    <h2 class="page-title">正里小曲｜市级非遗</h2>
+
+    <div class="content-section">
+      <div class="content-item">
+        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400" alt="正里小曲" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E正里小曲%3C/text%3E%3C/svg%3E'" />
+        <div class="content-item-text">
+          <h4>本土民间说唱曲艺</h4>
+          <p>以小曲小调叙事，伴奏配吹歌、竹板，田间、街巷即兴表演，乡土气息浓厚。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三级导航：传统饮食非遗 -->
+  <div id="page-heritage-food" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
+      <span>›</span>
+      <span>传统饮食非遗</span>
+    </div>
+
+    <h2 class="page-title">传统饮食非遗（广府特色舌尖非遗）</h2>
+
+    <div class="card-grid">
+      <div class="card" onclick="showPage('suyu')">
+        <div class="icon">🐟</div>
+        <h3>广府酥鱼</h3>
+        <p>市级非遗美食</p>
+        <span class="tag">特色</span>
+      </div>
+      <div class="card" onclick="showPage('other-food')">
+        <div class="icon">🥮</div>
+        <h3>永年驴肉灌肠、李记太极酥糖</h3>
+        <p>百年老字号非遗小吃</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四级导航：广府酥鱼 -->
+  <div id="page-suyu" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-food')">传统饮食非遗</a>
+      <span>›</span>
+      <span>广府酥鱼</span>
+    </div>
+
+    <h2 class="page-title">广府酥鱼｜市级非遗美食</h2>
+
+    <div class="content-section">
+      <div class="content-item">
+        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400" alt="广府酥鱼" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E广府酥鱼%3C/text%3E%3C/svg%3E'" />
+        <div class="content-item-text">
+          <h4>依托永年洼水产</h4>
+          <p>鲜鱼经油炸、砂锅文火焖制5小时，鱼骨全酥、骨肉同嚼，酸甜入味。</p>
+          <p style="margin-top: 0.75rem;">传承古法煨制技艺，古城水街为非遗工坊集中地。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四级导航：其他美食 -->
+  <div id="page-other-food" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-food')">传统饮食非遗</a>
+      <span>›</span>
+      <span>永年驴肉灌肠、李记太极酥糖</span>
+    </div>
+
+    <h2 class="page-title">永年驴肉灌肠、李记太极酥糖</h2>
+
+    <div class="content-section">
+      <div class="content-item">
+        <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400" alt="驴肉灌肠" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E驴肉灌肠%3C/text%3E%3C/svg%3E'" />
+        <div class="content-item-text">
+          <h4>百年老字号非遗小吃</h4>
+          <p>酥糖相传为杨露禅日常点心，麦芽糖+芝麻古法手工制作。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三级导航：活态传承现状 -->
+  <div id="page-heritage-status" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
+      <span>›</span>
+      <span>活态传承现状</span>
+    </div>
+
+    <h2 class="page-title">活态传承现状</h2>
+
+    <div class="card-grid">
+      <div class="card" onclick="showPage('exhibition')">
+        <div class="icon">🎭</div>
+        <h3>展演场景</h3>
+        <p>古城常态化非遗展演</p>
+      </div>
+      <div class="card" onclick="showPage('training')">
+        <div class="icon">🏫</div>
+        <h3>传习空间</h3>
+        <p>非遗传习所、武馆、吹歌班社</p>
+      </div>
+      <div class="card" onclick="showPage('tourism')">
+        <div class="icon">🏞️</div>
+        <h3>文旅融合</h3>
+        <p>非遗沉浸式体验项目</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四级导航：展演场景 -->
+  <div id="page-exhibition" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-status')">活态传承现状</a>
+      <span>›</span>
+      <span>展演场景</span>
+    </div>
+
+    <h2 class="page-title">展演场景</h2>
+
+    <div class="content-section">
+      <div class="content-item">
+        <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400" alt="展演场景" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E展演场景%3C/text%3E%3C/svg%3E'" />
+        <div class="content-item-text">
+          <h4>古城东大街、府衙广场、太极广场</h4>
+          <p>常年非遗展演：太极、吹歌、西调、抬花桌巡游集中在春节、中秋、庙会。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四级导航：传习空间 -->
+  <div id="page-training" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-status')">活态传承现状</a>
+      <span>›</span>
+      <span>传习空间</span>
+    </div>
+
+    <h2 class="page-title">传习空间</h2>
+
+    <div class="content-section">
+      <div class="content-item">
+        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400" alt="传习空间" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E传习空间%3C/text%3E%3C/svg%3E'" />
+        <div class="content-item-text">
+          <h4>露禅故居、武禹襄故居</h4>
+          <p>设非遗传习所，武馆、吹歌班社常年收徒。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四级导航：文旅融合 -->
+  <div id="page-tourism" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
+      <span>›</span>
+      <a onclick="showPage('heritage-status')">活态传承现状</a>
+      <span>›</span>
+      <span>文旅融合</span>
+    </div>
+
+    <h2 class="page-title">文旅融合</h2>
+
+    <div class="content-section">
+      <div class="content-item">
+        <img src="https://images.unsplash.com/photo-1506905925346-21b9180b6e09?w=400" alt="文旅融合" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E文旅融合%3C/text%3E%3C/svg%3E'" />
+        <div class="content-item-text">
+          <h4>古城核心文旅项目</h4>
+          <p>非遗沉浸式演出、非遗手作体验、美食工坊。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 二级导航：广府古城保护与传承措施 -->
+  <div id="page-protection-main" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <span>广府古城保护与传承措施</span>
+    </div>
+
+    <h2 class="page-title">广府古城保护与传承措施</h2>
+
+    <div class="card-grid">
+      <div class="card" onclick="showPage('protection-physical')">
+        <div class="icon">🏛️</div>
+        <h3>实体风貌保护</h3>
+        <p>修旧如旧、严控改造、治理环境</p>
+      </div>
+      <div class="card" onclick="showPage('protection-culture')">
+        <div class="icon">🎭</div>
+        <h3>文化非遗传承</h3>
+        <p>深挖文化、活化非遗、创新展示</p>
+      </div>
+      <div class="card" onclick="showPage('protection-planning')">
+        <div class="icon">📋</div>
+        <h3>规划与长效管理</h3>
+        <p>分区管控、完善配套、可持续发展</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三级导航：实体风貌保护 -->
+  <div id="page-protection-physical" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('protection-main')">广府古城保护与传承措施</a>
+      <span>›</span>
+      <span>实体风貌保护</span>
+    </div>
+
+    <h2 class="page-title">实体风貌保护</h2>
+
+    <div class="content-section">
+      <h3>🏛️ 保护措施</h3>
+      <div class="content-grid">
+        <div class="content-item">
+          <img src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400" alt="修旧如旧" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E修旧如旧%3C/text%3E%3C/svg%3E'" />
+          <div class="content-item-text">
+            <h4>修旧如旧</h4>
+            <p>修缮古城墙、古民居、弘济桥、名人故居等文物建筑，保留原有形制与材质。</p>
+          </div>
+        </div>
+
+        <div class="content-item">
+          <img src="https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=400" alt="严控改造" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E严控改造%3C/text%3E%3C/svg%3E'" />
+          <div class="content-item-text">
+            <h4>严控古城改造</h4>
+            <p>严控古城内新建、改建、外立面改造，统一街巷风貌，杜绝乱拆乱建。</p>
+          </div>
+        </div>
+
+        <div class="content-item">
+          <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400" alt="治理环境" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E治理环境%3C/text%3E%3C/svg%3E'" />
+          <div class="content-item-text">
+            <h4>治理生态环境</h4>
+            <p>治理永年洼湿地水系、整治街巷环境，修复生态景观，保护"水城共生"格局。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三级导航：文化非遗传承 -->
+  <div id="page-protection-culture" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('protection-main')">广府古城保护与传承措施</a>
+      <span>›</span>
+      <span>文化非遗传承</span>
+    </div>
+
+    <h2 class="page-title">文化非遗传承</h2>
+
+    <div class="content-section">
+      <h3>🎭 传承措施</h3>
+      <div class="content-grid">
+        <div class="content-item">
+          <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400" alt="深挖文化" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E深挖文化%3C/text%3E%3C/svg%3E'" />
+          <div class="content-item-text">
+            <h4>深挖太极文化</h4>
+            <p>深挖太极文化、广府民俗、古城历史，建设太极博物馆、文化景观小品，植入地域文化符号。</p>
+          </div>
+        </div>
+
+        <div class="content-item">
+          <img src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=400" alt="活化非遗" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E活化非遗%3C/text%3E%3C/svg%3E'" />
+          <div class="content-item-text">
+            <h4>活化非遗资源</h4>
+            <p>常态化开展太极展演、民俗活动，传承传统技艺与地域文脉。</p>
+          </div>
+        </div>
+
+        <div class="content-item">
+          <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400" alt="创新展示" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E创新展示%3C/text%3E%3C/svg%3E'" />
+          <div class="content-item-text">
+            <h4>创新文化展示</h4>
+            <p>结合数字光影、夜游演艺、沉浸式体验，创新文化展示形式。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三级导航：规划与长效管理 -->
+  <div id="page-protection-planning" class="page">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">首页</a>
+      <span>›</span>
+      <a onclick="showPage('protection-main')">广府古城保护与传承措施</a>
+      <span>›</span>
+      <span>规划与长效管理</span>
+    </div>
+
+    <h2 class="page-title">规划与长效管理</h2>
+
+    <div class="content-section">
+      <h3>📋 管理措施</h3>
+      <div class="content-grid">
+        <div class="content-item">
+          <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400" alt="分区管控" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E分区管控%3C/text%3E%3C/svg%3E'" />
+          <div class="content-item-text">
+            <h4>落实古城专项保护规划</h4>
+            <p>分区管控核心保护区、风貌控制区。</p>
+          </div>
+        </div>
+
+        <div class="content-item">
+          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400" alt="完善配套" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E完善配套%3C/text%3E%3C/svg%3E'" />
+          <div class="content-item-text">
+            <h4>完善旅游配套设施</h4>
+            <p>优化业态布局，规范商铺经营，避免过度商业化。</p>
+          </div>
+        </div>
+
+        <div class="content-item">
+          <img src="https://images.unsplash.com/photo-1506905925346-21b9180b6e09?w=400" alt="可持续发展" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E可持续发展%3C/text%3E%3C/svg%3E'" />
+          <div class="content-item-text">
+            <h4>结合文旅融合</h4>
+            <p>适度开发、合理利用，实现保护优先、活态传承、可持续发展。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>© 2024 广府古城文化导览. 保留所有权利.</p>
+    <p>冀ICP备XXXXXXXX号-1</p>
+  </div>
+
+  <script>
+    function showPage(pageId) {
+      // 隐藏所有页面
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+      
+      // 显示指定页面
+      const targetPage = document.getElementById('page-' + pageId);
+      if (targetPage) {
+        targetPage.classList.add('active');
+      }
+
+      // 滚动到页面顶部
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
