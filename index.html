@@ -1,969 +1,352 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>广府古城文化导览</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600;700&display=swap');
-
-    :root {
-      font-family: 'Noto Serif SC', 'SimSun', serif;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      min-height: 100vh;
-      background: linear-gradient(to bottom, #fef3c7, #fcd34d);
-    }
-
-    .header {
-      background: linear-gradient(to bottom, #78350f, #92400e);
-      color: #fef3c7;
-      padding: 1rem;
-      text-align: center;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header h1 {
-      font-family: 'Ma Shan Zheng', serif;
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-      cursor: pointer;
-    }
-
-    .header p {
-      font-size: 0.9rem;
-      opacity: 0.8;
-    }
-
-    .breadcrumb {
-      background: rgba(0, 0, 0, 0.05);
-      padding: 0.5rem 1rem;
-      font-size: 0.85rem;
-      color: #78350f;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .breadcrumb a {
-      color: #78350f;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .breadcrumb a:hover {
-      text-decoration: underline;
-    }
-
-    .breadcrumb span {
-      color: #92400e;
-    }
-
-    .page {
-      display: none;
-      padding: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    .hero {
-      position: relative;
-      height: 500px;
-      background: url('https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=1200') center/cover;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-      border-radius: 1rem;
-      overflow: hidden;
-      margin-bottom: 2rem;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.7));
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      padding: 2rem;
-    }
-
-    .hero h2 {
-      font-family: 'Ma Shan Zheng', serif;
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-
-    .hero p {
-      font-size: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .page-title {
-      font-family: 'Ma Shan Zheng', serif;
-      font-size: 2.5rem;
-      color: #78350f;
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .page-description {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      margin-bottom: 2rem;
-      color: #4b5563;
-      line-height: 1.8;
-      font-size: 1rem;
-    }
-
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .card {
-      background: white;
-      border-radius: 1rem;
-      padding: 2rem;
-      text-align: center;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s;
-      cursor: pointer;
-    }
-
-    .card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    }
-
-    .card .icon {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-    }
-
-    .card h3 {
-      font-family: 'Ma Shan Zheng', serif;
-      font-size: 1.5rem;
-      color: #78350f;
-      margin-bottom: 1rem;
-    }
-
-    .card p {
-      font-size: 0.95rem;
-      color: #6b7280;
-      line-height: 1.6;
-    }
-
-    .card .tag {
-      display: inline-block;
-      background: #fbbf24;
-      color: #78350f;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.8rem;
-      margin-top: 0.5rem;
-    }
-
-    .content-section {
-      background: white;
-      border-radius: 1rem;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-
-    .content-section h3 {
-      font-family: 'Ma Shan Zheng', serif;
-      font-size: 1.8rem;
-      color: #78350f;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .content-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-
-    .content-item {
-      display: flex;
-      gap: 1.5rem;
-      align-items: flex-start;
-    }
-
-    .content-item img {
-      width: 200px;
-      height: 150px;
-      object-fit: cover;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-
-    .content-item-text {
-      flex: 1;
-    }
-
-    .content-item-text h4 {
-      font-family: 'Ma Shan Zheng', serif;
-      font-size: 1.3rem;
-      color: #78350f;
-      margin-bottom: 0.75rem;
-    }
-
-    .content-item-text p {
-      color: #4b5563;
-      line-height: 1.7;
-      font-size: 0.95rem;
-    }
-
-    .content-item-text ul {
-      margin-top: 0.5rem;
-      padding-left: 1.5rem;
-    }
-
-    .content-item-text li {
-      color: #4b5563;
-      line-height: 1.6;
-      margin-bottom: 0.25rem;
-    }
-
-    .status-box {
-      background: #fef3c7;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      margin-top: 1.5rem;
-      border-left: 4px solid #fbbf24;
-    }
-
-    .status-box h5 {
-      font-weight: bold;
-      color: #78350f;
-      margin-bottom: 0.5rem;
-    }
-
-    .status-box p {
-      color: #4b5563;
-      font-size: 0.9rem;
-    }
-
-    .footer {
-      background: #451a03;
-      color: #fef3c7;
-      padding: 2rem;
-      text-align: center;
-    }
-
-    .footer p {
-      font-size: 0.8rem;
-      opacity: 0.7;
-    }
-
-    @media (max-width: 640px) {
-      .header h1 {
-        font-size: 1.5rem;
-      }
-      .hero {
-        height: 300px;
-      }
-      .hero h2 {
-        font-size: 2rem;
-      }
-      .hero p {
-        font-size: 1rem;
-      }
-      .page {
-        padding: 1rem;
-      }
-      .card-grid {
-        grid-template-columns: 1fr;
-      }
-      .content-item {
-        flex-direction: column;
-      }
-      .content-item img {
-        width: 100%;
-        height: 200px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <h1 onclick="showPage('home')">广府古城</h1>
-    <p>北方水城 · 太极之乡</p>
-  </div>
-
-  <!-- 首页 -->
-  <div id="page-home" class="page active">
-    <div class="hero">
-      <div class="hero-content">
-        <h2>北方水城 · 太极之乡 · 广府古城</h2>
-        <p>千年古城，非遗传承，探索太极圣地</p>
-      </div>
-    </div>
-
-    <div class="card-grid">
-      <div class="card" onclick="showPage('heritage-main')">
-        <div class="icon">🎭</div>
-        <h3>邯郸广府古城非遗文化</h3>
-        <p>太极圣地、民间艺术之乡，集武学、戏曲、民乐、民俗、饮食非遗于一体</p>
-      </div>
-      <div class="card" onclick="showPage('protection-main')">
-        <div class="icon">🛡️</div>
-        <h3>广府古城保护与传承措施</h3>
-        <p>实体风貌保护、文化非遗传承、规划与长效管理</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 二级导航：邯郸广府古城非遗文化 -->
-  <div id="page-heritage-main" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <span>邯郸广府古城非遗文化</span>
-    </div>
-
-    <h2 class="page-title">邯郸广府古城非遗文化</h2>
-
-    <div class="page-description">
-      广府古城（永年广府）坐拥2项人类非遗、3项国家级非遗、多项省市级非遗，集武学、戏曲、民乐、民俗、饮食非遗于一体，是河北冀南非遗核心聚集地，素有太极圣地、民间艺术之乡之称。
-    </div>
-
-    <div class="card-grid">
-      <div class="card" onclick="showPage('heritage-national')">
-        <div class="icon">🏆</div>
-        <h3>世界级+国家级非遗</h3>
-        <p>杨氏太极拳、武氏太极拳、永年鼓吹乐、永年抬花桌</p>
-        <span class="tag">核心</span>
-      </div>
-      <div class="card" onclick="showPage('heritage-provincial')">
-        <div class="icon">📜</div>
-        <h3>省市级重点非遗</h3>
-        <p>永年西调、正里小曲等地方特色非遗</p>
-      </div>
-      <div class="card" onclick="showPage('heritage-food')">
-        <div class="icon">🍜</div>
-        <h3>传统饮食非遗</h3>
-        <p>广府酥鱼、驴肉灌肠、太极酥糖等特色美食</p>
-        <span class="tag">广府特色</span>
-      </div>
-      <div class="card" onclick="showPage('heritage-status')">
-        <div class="icon">🎭</div>
-        <h3>活态传承现状</h3>
-        <p>展演场景、传习空间、文旅融合</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 三级导航：世界级+国家级非遗 -->
-  <div id="page-heritage-national" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
-      <span>›</span>
-      <span>世界级+国家级非遗</span>
-    </div>
-
-    <h2 class="page-title">世界级+国家级非遗（核心）</h2>
-
-    <div class="card-grid">
-      <div class="card" onclick="showPage('taiji')">
-        <div class="icon">☯️</div>
-        <h3>杨氏、武氏太极拳</h3>
-        <p>人类非物质文化遗产（2020年入选联合国名录）</p>
-        <span class="tag">人类非遗</span>
-      </div>
-      <div class="card" onclick="showPage('guchui')">
-        <div class="icon">🎵</div>
-        <h3>永年鼓吹乐（永年吹歌）</h3>
-        <p>第一批国家级非遗（2006）</p>
-        <span class="tag">国家级</span>
-      </div>
-      <div class="card" onclick="showPage('huazhuo')">
-        <div class="icon">🎊</div>
-        <h3>永年抬花桌</h3>
-        <p>第二批国家级非遗（2008）</p>
-        <span class="tag">国家级</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 四级导航：杨氏、武氏太极拳 -->
-  <div id="page-taiji" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-national')">世界级+国家级非遗</a>
-      <span>›</span>
-      <span>杨氏、武氏太极拳</span>
-    </div>
-
-    <h2 class="page-title">杨氏、武氏太极拳｜人类非物质文化遗产</h2>
-    <p style="text-align: center; color: #78350f; margin-bottom: 2rem;">2020年入选联合国名录</p>
-
-    <div class="content-section">
-      <div class="content-grid">
-        <div class="content-item">
-          <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400" alt="杨氏太极拳" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E杨氏太极拳%3C/text%3E%3C/svg%3E'" />
-          <div class="content-item-text">
-            <h4>杨氏太极拳（2006首批国遗）</h4>
-            <p>广府杨露禅创立，拳架舒展圆活、柔缓易学，国内24式简化太极以杨式拳架为蓝本，全球练习人数最多。</p>
-            <p style="margin-top: 0.5rem;">城内留存杨露禅故居、太极博物馆，街巷常年全民练拳。</p>
-          </div>
-        </div>
-
-        <div class="content-item">
-          <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400" alt="武氏太极拳" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E武氏太极拳%3C/text%3E%3C/svg%3E'" />
-          <div class="content-item-text">
-            <h4>武氏太极拳（2008二批国遗）</h4>
-            <p>武禹襄始创，拳架紧凑小巧、身法严谨，重内功拳理，传承世家集中在广府城内街巷。</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="status-box">
-        <h5>📍 现状</h5>
-        <p>古城常态化太极展演、太极研学，每年承办国际太极拳大会，本地半数居民习练太极。</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 四级导航：永年鼓吹乐 -->
-  <div id="page-guchui" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-national')">世界级+国家级非遗</a>
-      <span>›</span>
-      <span>永年鼓吹乐</span>
-    </div>
-
-    <h2 class="page-title">永年鼓吹乐（永年吹歌）｜第一批国家级非遗</h2>
-    <p style="text-align: center; color: #78350f; margin-bottom: 2rem;">2006年入选</p>
-
-    <div class="content-section">
-      <div class="content-item">
-        <img src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=400" alt="永年鼓吹乐" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E永年鼓吹乐%3C/text%3E%3C/svg%3E'" />
-        <div class="content-item-text">
-          <h4>冀南代表性民间吹打乐</h4>
-          <p>分吹奏、打击、咔戏三种表演形式，现存200余首古曲牌，分东、中、南三大流派：</p>
-          <ul>
-            <li><strong>东路：</strong>曲风古朴细腻</li>
-            <li><strong>中路：</strong>擅长模仿鸟兽鸣啼</li>
-            <li><strong>南路：</strong>规整大气</li>
-          </ul>
-          <p style="margin-top: 0.75rem;"><strong>用途：</strong>婚丧嫁娶、庙会节庆、抬花桌伴奏</p>
-          <p><strong>经典曲目：</strong>《小放驴》《一枝花》《抬花轿》</p>
-          <p style="margin-top: 0.75rem; font-weight: bold; color: #78350f;">永年获评中国吹歌艺术之乡</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 四级导航：永年抬花桌 -->
-  <div id="page-huazhuo" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-national')">世界级+国家级非遗</a>
-      <span>›</span>
-      <span>永年抬花桌</span>
-    </div>
-
-    <h2 class="page-title">永年抬花桌｜第二批国家级非遗</h2>
-    <p style="text-align: center; color: #78350f; margin-bottom: 2rem;">2008年入选</p>
-
-    <div class="content-section">
-      <div class="content-item">
-        <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400" alt="永年抬花桌" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E永年抬花桌%3C/text%3E%3C/svg%3E'" />
-        <div class="content-item-text">
-          <h4>起源初唐的大型民俗巡游舞蹈</h4>
-          <p>元宵主打展演项目：</p>
-          <ul>
-            <li>实木八仙桌缀满仿真花木，桌重200斤</li>
-            <li>8～16人抬杆巡游，搭配鼓吹乐伴奏</li>
-            <li>舞步含八字步、扭步、换肩抖步</li>
-            <li>全台展演需四五十人协作</li>
-          </ul>
-          <p style="margin-top: 0.75rem; font-weight: bold; color: #78350f;">是广府春节、庙会标志性非遗演艺</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 三级导航：省市级重点非遗 -->
-  <div id="page-heritage-provincial" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
-      <span>›</span>
-      <span>省市级重点非遗</span>
-    </div>
-
-    <h2 class="page-title">省市级重点非遗</h2>
-
-    <div class="card-grid">
-      <div class="card" onclick="showPage('xidiao')">
-        <div class="icon">🎭</div>
-        <h3>永年西调</h3>
-        <p>河北省级非遗</p>
-      </div>
-      <div class="card" onclick="showPage('xiaoqu')">
-        <div class="icon">🎵</div>
-        <h3>正里小曲</h3>
-        <p>市级非遗</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 四级导航：永年西调 -->
-  <div id="page-xidiao" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-provincial')">省市级重点非遗</a>
-      <span>›</span>
-      <span>永年西调</span>
-    </div>
-
-    <h2 class="page-title">永年西调｜河北省级非遗</h2>
-
-    <div class="content-section">
-      <div class="content-item">
-        <img src="https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=400" alt="永年西调" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E永年西调%3C/text%3E%3C/svg%3E'" />
-        <div class="content-item-text">
-          <h4>地方稀有梆子剧种</h4>
-          <p>俗称"泽州调"，唱腔高亢苍凉，剧目多历史侠义题材。</p>
-          <p style="margin-top: 0.75rem;">古城古戏台常态化定点演出，春节非遗大汇演主力项目。</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 四级导航：正里小曲 -->
-  <div id="page-xiaoqu" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-provincial')">省市级重点非遗</a>
-      <span>›</span>
-      <span>正里小曲</span>
-    </div>
-
-    <h2 class="page-title">正里小曲｜市级非遗</h2>
-
-    <div class="content-section">
-      <div class="content-item">
-        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400" alt="正里小曲" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E正里小曲%3C/text%3E%3C/svg%3E'" />
-        <div class="content-item-text">
-          <h4>本土民间说唱曲艺</h4>
-          <p>以小曲小调叙事，伴奏配吹歌、竹板，田间、街巷即兴表演，乡土气息浓厚。</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 三级导航：传统饮食非遗 -->
-  <div id="page-heritage-food" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
-      <span>›</span>
-      <span>传统饮食非遗</span>
-    </div>
-
-    <h2 class="page-title">传统饮食非遗（广府特色舌尖非遗）</h2>
-
-    <div class="card-grid">
-      <div class="card" onclick="showPage('suyu')">
-        <div class="icon">🐟</div>
-        <h3>广府酥鱼</h3>
-        <p>市级非遗美食</p>
-        <span class="tag">特色</span>
-      </div>
-      <div class="card" onclick="showPage('other-food')">
-        <div class="icon">🥮</div>
-        <h3>永年驴肉灌肠、李记太极酥糖</h3>
-        <p>百年老字号非遗小吃</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 四级导航：广府酥鱼 -->
-  <div id="page-suyu" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-food')">传统饮食非遗</a>
-      <span>›</span>
-      <span>广府酥鱼</span>
-    </div>
-
-    <h2 class="page-title">广府酥鱼｜市级非遗美食</h2>
-
-    <div class="content-section">
-      <div class="content-item">
-        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400" alt="广府酥鱼" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E广府酥鱼%3C/text%3E%3C/svg%3E'" />
-        <div class="content-item-text">
-          <h4>依托永年洼水产</h4>
-          <p>鲜鱼经油炸、砂锅文火焖制5小时，鱼骨全酥、骨肉同嚼，酸甜入味。</p>
-          <p style="margin-top: 0.75rem;">传承古法煨制技艺，古城水街为非遗工坊集中地。</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 四级导航：其他美食 -->
-  <div id="page-other-food" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-food')">传统饮食非遗</a>
-      <span>›</span>
-      <span>永年驴肉灌肠、李记太极酥糖</span>
-    </div>
-
-    <h2 class="page-title">永年驴肉灌肠、李记太极酥糖</h2>
-
-    <div class="content-section">
-      <div class="content-item">
-        <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400" alt="驴肉灌肠" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E驴肉灌肠%3C/text%3E%3C/svg%3E'" />
-        <div class="content-item-text">
-          <h4>百年老字号非遗小吃</h4>
-          <p>酥糖相传为杨露禅日常点心，麦芽糖+芝麻古法手工制作。</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 三级导航：活态传承现状 -->
-  <div id="page-heritage-status" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
-      <span>›</span>
-      <span>活态传承现状</span>
-    </div>
-
-    <h2 class="page-title">活态传承现状</h2>
-
-    <div class="card-grid">
-      <div class="card" onclick="showPage('exhibition')">
-        <div class="icon">🎭</div>
-        <h3>展演场景</h3>
-        <p>古城常态化非遗展演</p>
-      </div>
-      <div class="card" onclick="showPage('training')">
-        <div class="icon">🏫</div>
-        <h3>传习空间</h3>
-        <p>非遗传习所、武馆、吹歌班社</p>
-      </div>
-      <div class="card" onclick="showPage('tourism')">
-        <div class="icon">🏞️</div>
-        <h3>文旅融合</h3>
-        <p>非遗沉浸式体验项目</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 四级导航：展演场景 -->
-  <div id="page-exhibition" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-status')">活态传承现状</a>
-      <span>›</span>
-      <span>展演场景</span>
-    </div>
-
-    <h2 class="page-title">展演场景</h2>
-
-    <div class="content-section">
-      <div class="content-item">
-        <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400" alt="展演场景" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E展演场景%3C/text%3E%3C/svg%3E'" />
-        <div class="content-item-text">
-          <h4>古城东大街、府衙广场、太极广场</h4>
-          <p>常年非遗展演：太极、吹歌、西调、抬花桌巡游集中在春节、中秋、庙会。</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 四级导航：传习空间 -->
-  <div id="page-training" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-status')">活态传承现状</a>
-      <span>›</span>
-      <span>传习空间</span>
-    </div>
-
-    <h2 class="page-title">传习空间</h2>
-
-    <div class="content-section">
-      <div class="content-item">
-        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400" alt="传习空间" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E传习空间%3C/text%3E%3C/svg%3E'" />
-        <div class="content-item-text">
-          <h4>露禅故居、武禹襄故居</h4>
-          <p>设非遗传习所，武馆、吹歌班社常年收徒。</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 四级导航：文旅融合 -->
-  <div id="page-tourism" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-main')">邯郸广府古城非遗文化</a>
-      <span>›</span>
-      <a onclick="showPage('heritage-status')">活态传承现状</a>
-      <span>›</span>
-      <span>文旅融合</span>
-    </div>
-
-    <h2 class="page-title">文旅融合</h2>
-
-    <div class="content-section">
-      <div class="content-item">
-        <img src="https://images.unsplash.com/photo-1506905925346-21b9180b6e09?w=400" alt="文旅融合" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E文旅融合%3C/text%3E%3C/svg%3E'" />
-        <div class="content-item-text">
-          <h4>古城核心文旅项目</h4>
-          <p>非遗沉浸式演出、非遗手作体验、美食工坊。</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 二级导航：广府古城保护与传承措施 -->
-  <div id="page-protection-main" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <span>广府古城保护与传承措施</span>
-    </div>
-
-    <h2 class="page-title">广府古城保护与传承措施</h2>
-
-    <div class="card-grid">
-      <div class="card" onclick="showPage('protection-physical')">
-        <div class="icon">🏛️</div>
-        <h3>实体风貌保护</h3>
-        <p>修旧如旧、严控改造、治理环境</p>
-      </div>
-      <div class="card" onclick="showPage('protection-culture')">
-        <div class="icon">🎭</div>
-        <h3>文化非遗传承</h3>
-        <p>深挖文化、活化非遗、创新展示</p>
-      </div>
-      <div class="card" onclick="showPage('protection-planning')">
-        <div class="icon">📋</div>
-        <h3>规划与长效管理</h3>
-        <p>分区管控、完善配套、可持续发展</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 三级导航：实体风貌保护 -->
-  <div id="page-protection-physical" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('protection-main')">广府古城保护与传承措施</a>
-      <span>›</span>
-      <span>实体风貌保护</span>
-    </div>
-
-    <h2 class="page-title">实体风貌保护</h2>
-
-    <div class="content-section">
-      <h3>🏛️ 保护措施</h3>
-      <div class="content-grid">
-        <div class="content-item">
-          <img src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400" alt="修旧如旧" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E修旧如旧%3C/text%3E%3C/svg%3E'" />
-          <div class="content-item-text">
-            <h4>修旧如旧</h4>
-            <p>修缮古城墙、古民居、弘济桥、名人故居等文物建筑，保留原有形制与材质。</p>
-          </div>
-        </div>
-
-        <div class="content-item">
-          <img src="https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=400" alt="严控改造" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E严控改造%3C/text%3E%3C/svg%3E'" />
-          <div class="content-item-text">
-            <h4>严控古城改造</h4>
-            <p>严控古城内新建、改建、外立面改造，统一街巷风貌，杜绝乱拆乱建。</p>
-          </div>
-        </div>
-
-        <div class="content-item">
-          <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400" alt="治理环境" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E治理环境%3C/text%3E%3C/svg%3E'" />
-          <div class="content-item-text">
-            <h4>治理生态环境</h4>
-            <p>治理永年洼湿地水系、整治街巷环境，修复生态景观，保护"水城共生"格局。</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 三级导航：文化非遗传承 -->
-  <div id="page-protection-culture" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('protection-main')">广府古城保护与传承措施</a>
-      <span>›</span>
-      <span>文化非遗传承</span>
-    </div>
-
-    <h2 class="page-title">文化非遗传承</h2>
-
-    <div class="content-section">
-      <h3>🎭 传承措施</h3>
-      <div class="content-grid">
-        <div class="content-item">
-          <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400" alt="深挖文化" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E深挖文化%3C/text%3E%3C/svg%3E'" />
-          <div class="content-item-text">
-            <h4>深挖太极文化</h4>
-            <p>深挖太极文化、广府民俗、古城历史，建设太极博物馆、文化景观小品，植入地域文化符号。</p>
-          </div>
-        </div>
-
-        <div class="content-item">
-          <img src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=400" alt="活化非遗" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E活化非遗%3C/text%3E%3C/svg%3E'" />
-          <div class="content-item-text">
-            <h4>活化非遗资源</h4>
-            <p>常态化开展太极展演、民俗活动，传承传统技艺与地域文脉。</p>
-          </div>
-        </div>
-
-        <div class="content-item">
-          <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400" alt="创新展示" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E创新展示%3C/text%3E%3C/svg%3E'" />
-          <div class="content-item-text">
-            <h4>创新文化展示</h4>
-            <p>结合数字光影、夜游演艺、沉浸式体验，创新文化展示形式。</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 三级导航：规划与长效管理 -->
-  <div id="page-protection-planning" class="page">
-    <div class="breadcrumb">
-      <a onclick="showPage('home')">首页</a>
-      <span>›</span>
-      <a onclick="showPage('protection-main')">广府古城保护与传承措施</a>
-      <span>›</span>
-      <span>规划与长效管理</span>
-    </div>
-
-    <h2 class="page-title">规划与长效管理</h2>
-
-    <div class="content-section">
-      <h3>📋 管理措施</h3>
-      <div class="content-grid">
-        <div class="content-item">
-          <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400" alt="分区管控" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E分区管控%3C/text%3E%3C/svg%3E'" />
-          <div class="content-item-text">
-            <h4>落实古城专项保护规划</h4>
-            <p>分区管控核心保护区、风貌控制区。</p>
-          </div>
-        </div>
-
-        <div class="content-item">
-          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400" alt="完善配套" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E完善配套%3C/text%3E%3C/svg%3E'" />
-          <div class="content-item-text">
-            <h4>完善旅游配套设施</h4>
-            <p>优化业态布局，规范商铺经营，避免过度商业化。</p>
-          </div>
-        </div>
-
-        <div class="content-item">
-          <img src="https://images.unsplash.com/photo-1506905925346-21b9180b6e09?w=400" alt="可持续发展" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'150\'%3E%3Crect fill=\'%23fef3c7\' width=\'400\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%2378350f\' text-anchor=\'middle\' dy=\'.3em\' font-size=\'1.2rem\'%3E可持续发展%3C/text%3E%3C/svg%3E'" />
-          <div class="content-item-text">
-            <h4>结合文旅融合</h4>
-            <p>适度开发、合理利用，实现保护优先、活态传承、可持续发展。</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer">
-    <p>© 2024 广府古城文化导览. 保留所有权利.</p>
-    <p>冀ICP备XXXXXXXX号-1</p>
-  </div>
-
-  <script>
-    function showPage(pageId) {
-      // 隐藏所有页面
-      document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
-      });
-      
-      // 显示指定页面
-      const targetPage = document.getElementById('page-' + pageId);
-      if (targetPage) {
-        targetPage.classList.add('active');
-      }
-
-      // 滚动到页面顶部
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  </script>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Trae Project</title>
+    <script type="module" crossorigin src="./assets/index-DjkQp7Vs.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-C5oI1z8S.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  
+          <script>
+            (function() {
+              'use strict';
+              
+              if (window.TraeBadgePlugin) return;
+              
+              const css = `
+.trae-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-sizing: border-box;
+  border-radius: 6px;
+  position: fixed;
+  padding: 8px 8px 8px 10px;
+  height: 28px;
+  width: 130px;
+  z-index: 9999;
+}
+
+.trae-badge:hover.trae-badge--light {
+  background-color: #EDEFF2;
+}
+
+.trae-badge:hover.trae-badge--dark {
+  background-color: #2A2D31;
+}
+
+.trae-badge-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.trae-badge-logo {
+  flex-shrink: 0;
+}
+
+.trae-badge-share {
+  flex-shrink: 0;
+  color: rgba(78, 82, 87, 1);
+}
+
+.trae-badge:hover.trae-badge--light .trae-badge-share {
+  color: rgba(38, 41, 44, 1);
+}
+
+.trae-badge:hover.trae-badge--dark .trae-badge-share {
+  color: #D1D3DB;
+}
+
+.trae-badge-cancel {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+}
+
+.trae-badge:hover .trae-badge-cancel {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* 在移动端设备上始终显示取消按�?*/
+@media (hover: none) and (pointer: coarse) {
+  .trae-badge-cancel {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+}
+
+.trae-badge--light {
+  background-color: rgba(255, 255, 255, 1);
+  color: #ffffff;
+  box-shadow: 0px 0px 0.5px 0px rgba(0, 0, 0, 0.12), 0px 1px 3px 0px rgba(0, 0, 0, 0.08), 0px 4px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.trae-badge--dark {
+  background-color: #000000;
+  color: #ffffff;
+  box-shadow: 0px 0px 0.5px 0px rgba(0, 0, 0, 0.12), 0px 1px 3px 0px rgba(0, 0, 0, 0.08), 0px 4px 8px 0px rgba(0, 0, 0, 0.12);
+}
+
+.trae-badge--bottom-right { bottom: 20px; right: 20px; }
+.trae-badge--bottom-left { bottom: 20px; left: 20px; }
+.trae-badge--top-right { top: 20px; right: 20px; }
+.trae-badge--top-left { top: 20px; left: 20px; }
+`;
+              const logos = {"light":"<svg width=\"92\" height=\"12\" viewBox=\"0 0 92 12\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<g clip-path=\"url(#clip0_5805_55291)\">\n<g clip-path=\"url(#clip1_5805_55291)\">\n<path d=\"M15.1579 11.2121H2.6478V9.12821H0.562988V0.787872H15.1579V11.2121ZM2.6478 9.12821H13.073V2.87269H2.6478V9.12821ZM7.86092 5.96865L6.38672 7.44275L4.91261 5.96865L6.38672 4.49445L7.86092 5.96865ZM12.0306 5.96775L10.5564 7.44185L9.08233 5.96775L10.5564 4.49355L12.0306 5.96775Z\" fill=\"white\"/>\n</g>\n<g clip-path=\"url(#clip2_5805_55291)\">\n<path d=\"M28.0793 3.37087H25.142V10.6863H23.143V3.37087H20.2048V1.5047H28.0793V3.37087ZM55.4369 3.36808H50.3789V8.81641H55.4369V10.6835H48.3789V1.50092H55.4369V3.36808ZM34.1761 1.50092C36.4528 1.50092 37.1355 2.26109 37.1355 4.43355C37.1355 6.00363 36.6872 6.72417 35.4243 7.14483L37.1466 10.6817H34.9474L33.3569 7.38095H31.2204L31.2222 10.6817V10.6826H29.2583V1.50092H34.1761ZM47.4897 10.6826H45.3993L44.5662 8.50363H40.8449L40.0819 10.6826H37.9048L41.4232 1.5047H44.081L47.4897 10.6826ZM55.436 6.119L53.8697 7.59311L52.3955 6.119L53.8697 4.6448L55.436 6.119ZM41.4547 6.86439H44.0173L42.8578 3.54429H42.5985L41.4547 6.86439ZM31.2222 5.60883H33.8948V5.60793C34.5636 5.60793 35.07 5.38284 35.0701 4.79156V4.14581C35.0701 3.55449 34.5636 3.32934 33.8948 3.32934H31.2222V5.60883Z\" fill=\"white\"/>\n</g>\n</g>\n<path d=\"M65.0407 4.17188C65.0009 3.79972 64.8333 3.50994 64.5379 3.30256C64.2453 3.09517 63.8646 2.99148 63.3958 2.99148C63.0663 2.99148 62.7836 3.04119 62.5478 3.14062C62.312 3.24006 62.1316 3.375 62.0066 3.54545C61.8816 3.71591 61.8177 3.91051 61.8149 4.12926C61.8149 4.31108 61.856 4.46875 61.9384 4.60227C62.0237 4.7358 62.1387 4.84943 62.2836 4.94318C62.4285 5.03409 62.589 5.1108 62.7651 5.1733C62.9413 5.2358 63.1188 5.28835 63.2978 5.33097L64.116 5.53551C64.4455 5.61222 64.7623 5.71591 65.0663 5.84659C65.3731 5.97727 65.6472 6.14205 65.8887 6.34091C66.133 6.53977 66.3262 6.77983 66.4683 7.06108C66.6103 7.34233 66.6813 7.67187 66.6813 8.04972C66.6813 8.56108 66.5506 9.01136 66.2893 9.40057C66.0279 9.78693 65.6501 10.0895 65.1558 10.3082C64.6643 10.5241 64.0691 10.6321 63.3703 10.6321C62.6913 10.6321 62.1018 10.527 61.6018 10.3168C61.1046 10.1065 60.7154 9.79972 60.4342 9.39631C60.1558 8.9929 60.0052 8.50142 59.9825 7.92188H61.5379C61.5606 8.22585 61.6543 8.47869 61.8191 8.6804C61.9839 8.8821 62.1984 9.03267 62.4626 9.1321C62.7296 9.23153 63.0279 9.28125 63.3575 9.28125C63.7012 9.28125 64.0024 9.23011 64.2609 9.12784C64.5222 9.02273 64.7268 8.87784 64.8745 8.69318C65.0222 8.50568 65.0975 8.28693 65.1004 8.03693C65.0975 7.80966 65.0308 7.62216 64.9001 7.47443C64.7694 7.32386 64.5862 7.19886 64.3504 7.09943C64.1174 6.99716 63.8447 6.90625 63.5322 6.8267L62.5393 6.57102C61.8205 6.38636 61.2524 6.10653 60.8347 5.73153C60.42 5.35369 60.2126 4.85227 60.2126 4.22727C60.2126 3.71307 60.3518 3.26278 60.6302 2.87642C60.9114 2.49006 61.2935 2.19034 61.7765 1.97727C62.2595 1.76136 62.8063 1.65341 63.4171 1.65341C64.0364 1.65341 64.5791 1.76136 65.045 1.97727C65.5137 2.19034 65.8816 2.48722 66.1487 2.8679C66.4157 3.24574 66.5535 3.6804 66.562 4.17188H65.0407ZM75.8891 6.13636C75.8891 7.0767 75.7129 7.8821 75.3607 8.55256C75.0112 9.22017 74.534 9.73153 73.9288 10.0866C73.3266 10.4418 72.6433 10.6193 71.8791 10.6193C71.1149 10.6193 70.4303 10.4418 69.8252 10.0866C69.2229 9.72869 68.7456 9.21591 68.3933 8.5483C68.0439 7.87784 67.8692 7.07386 67.8692 6.13636C67.8692 5.19602 68.0439 4.39205 68.3933 3.72443C68.7456 3.05398 69.2229 2.54119 69.8252 2.18608C70.4303 1.83097 71.1149 1.65341 71.8791 1.65341C72.6433 1.65341 73.3266 1.83097 73.9288 2.18608C74.534 2.54119 75.0112 3.05398 75.3607 3.72443C75.7129 4.39205 75.8891 5.19602 75.8891 6.13636ZM74.2996 6.13636C74.2996 5.47443 74.1959 4.91619 73.9885 4.46165C73.784 4.00426 73.4999 3.65909 73.1362 3.42614C72.7726 3.19034 72.3536 3.07244 71.8791 3.07244C71.4047 3.07244 70.9857 3.19034 70.622 3.42614C70.2584 3.65909 69.9729 4.00426 69.7655 4.46165C69.5609 4.91619 69.4587 5.47443 69.4587 6.13636C69.4587 6.7983 69.5609 7.35795 69.7655 7.81534C69.9729 8.26989 70.2584 8.61506 70.622 8.85085C70.9857 9.08381 71.4047 9.20028 71.8791 9.20028C72.3536 9.20028 72.7726 9.08381 73.1362 8.85085C73.4999 8.61506 73.784 8.26989 73.9885 7.81534C74.1959 7.35795 74.2996 6.7983 74.2996 6.13636ZM77.3837 10.5V1.77273H78.9647V9.17472H82.8085V10.5H77.3837ZM91.6391 6.13636C91.6391 7.0767 91.4629 7.8821 91.1107 8.55256C90.7612 9.22017 90.284 9.73153 89.6788 10.0866C89.0766 10.4418 88.3933 10.6193 87.6291 10.6193C86.8649 10.6193 86.1803 10.4418 85.5752 10.0866C84.9729 9.72869 84.4956 9.21591 84.1433 8.5483C83.7939 7.87784 83.6192 7.07386 83.6192 6.13636C83.6192 5.19602 83.7939 4.39205 84.1433 3.72443C84.4956 3.05398 84.9729 2.54119 85.5752 2.18608C86.1803 1.83097 86.8649 1.65341 87.6291 1.65341C88.3933 1.65341 89.0766 1.83097 89.6788 2.18608C90.284 2.54119 90.7612 3.05398 91.1107 3.72443C91.4629 4.39205 91.6391 5.19602 91.6391 6.13636ZM90.0496 6.13636C90.0496 5.47443 89.9459 4.91619 89.7385 4.46165C89.534 4.00426 89.2499 3.65909 88.8862 3.42614C88.5226 3.19034 88.1036 3.07244 87.6291 3.07244C87.1547 3.07244 86.7357 3.19034 86.372 3.42614C86.0084 3.65909 85.7229 4.00426 85.5155 4.46165C85.3109 4.91619 85.2087 5.47443 85.2087 6.13636C85.2087 6.7983 85.3109 7.35795 85.5155 7.81534C85.7229 8.26989 86.0084 8.61506 86.372 8.85085C86.7357 9.08381 87.1547 9.20028 87.6291 9.20028C88.1036 9.20028 88.5226 9.08381 88.8862 8.85085C89.2499 8.61506 89.534 8.26989 89.7385 7.81534C89.9459 7.35795 90.0496 6.7983 90.0496 6.13636Z\" fill=\"#32F08C\"/>\n<defs>\n<clipPath id=\"clip0_5805_55291\">\n<rect width=\"54.874\" height=\"10.4242\" fill=\"white\" transform=\"translate(0.562988 0.787872)\"/>\n</clipPath>\n<clipPath id=\"clip1_5805_55291\">\n<rect width=\"14.5949\" height=\"10.4242\" fill=\"white\" transform=\"translate(0.562988 0.787872)\"/>\n</clipPath>\n<clipPath id=\"clip2_5805_55291\">\n<rect width=\"35.2321\" height=\"9.18536\" fill=\"white\" transform=\"translate(20.2048 1.50092)\"/>\n</clipPath>\n</defs>\n</svg>","dark":"<svg width=\"92\" height=\"12\" viewBox=\"0 0 92 12\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<g clip-path=\"url(#clip0_5805_55291)\">\n<g clip-path=\"url(#clip1_5805_55291)\">\n<path d=\"M15.1579 11.2121H2.6478V9.12821H0.562988V0.787872H15.1579V11.2121ZM2.6478 9.12821H13.073V2.87269H2.6478V9.12821ZM7.86092 5.96865L6.38672 7.44275L4.91261 5.96865L6.38672 4.49445L7.86092 5.96865ZM12.0306 5.96775L10.5564 7.44185L9.08233 5.96775L10.5564 4.49355L12.0306 5.96775Z\" fill=\"black\"/>\n</g>\n<g clip-path=\"url(#clip2_5805_55291)\">\n<path d=\"M28.0793 3.37088H25.142V10.6863H23.143V3.37088H20.2048V1.50471H28.0793V3.37088ZM55.4369 3.36808H50.3789V8.81642H55.4369V10.6835H48.3789V1.50092H55.4369V3.36808ZM34.1761 1.50092C36.4528 1.50092 37.1355 2.2611 37.1355 4.43355C37.1355 6.00364 36.6872 6.72418 35.4243 7.14484L37.1466 10.6817H34.9474L33.3569 7.38096H31.2204L31.2222 10.6817V10.6826H29.2583V1.50092H34.1761ZM47.4897 10.6826H45.3993L44.5662 8.50363H40.8449L40.0819 10.6826H37.9048L41.4232 1.50471H44.081L47.4897 10.6826ZM55.436 6.11901L53.8697 7.59312L52.3955 6.11901L53.8697 4.64481L55.436 6.11901ZM41.4547 6.8644H44.0173L42.8578 3.5443H42.5985L41.4547 6.8644ZM31.2222 5.60884H33.8948V5.60794C34.5636 5.60793 35.07 5.38285 35.0701 4.79156V4.14581C35.0701 3.5545 34.5636 3.32935 33.8948 3.32935H31.2222V5.60884Z\" fill=\"black\"/>\n</g>\n</g>\n<path d=\"M65.0407 4.17188C65.0009 3.79972 64.8333 3.50994 64.5379 3.30256C64.2453 3.09517 63.8646 2.99148 63.3958 2.99148C63.0663 2.99148 62.7836 3.04119 62.5478 3.14062C62.312 3.24006 62.1316 3.375 62.0066 3.54545C61.8816 3.71591 61.8177 3.91051 61.8149 4.12926C61.8149 4.31108 61.856 4.46875 61.9384 4.60227C62.0237 4.7358 62.1387 4.84943 62.2836 4.94318C62.4285 5.03409 62.589 5.1108 62.7651 5.1733C62.9413 5.2358 63.1188 5.28835 63.2978 5.33097L64.116 5.53551C64.4455 5.61222 64.7623 5.71591 65.0663 5.84659C65.3731 5.97727 65.6472 6.14205 65.8887 6.34091C66.133 6.53977 66.3262 6.77983 66.4683 7.06108C66.6103 7.34233 66.6813 7.67187 66.6813 8.04972C66.6813 8.56108 66.5506 9.01136 66.2893 9.40057C66.0279 9.78693 65.6501 10.0895 65.1558 10.3082C64.6643 10.5241 64.0691 10.6321 63.3703 10.6321C62.6913 10.6321 62.1018 10.527 61.6018 10.3168C61.1046 10.1065 60.7154 9.79972 60.4342 9.39631C60.1558 8.9929 60.0052 8.50142 59.9825 7.92188H61.5379C61.5606 8.22585 61.6543 8.47869 61.8191 8.6804C61.9839 8.8821 62.1984 9.03267 62.4626 9.1321C62.7296 9.23153 63.0279 9.28125 63.3575 9.28125C63.7012 9.28125 64.0024 9.23011 64.2609 9.12784C64.5222 9.02273 64.7268 8.87784 64.8745 8.69318C65.0222 8.50568 65.0975 8.28693 65.1004 8.03693C65.0975 7.80966 65.0308 7.62216 64.9001 7.47443C64.7694 7.32386 64.5862 7.19886 64.3504 7.09943C64.1174 6.99716 63.8447 6.90625 63.5322 6.8267L62.5393 6.57102C61.8205 6.38636 61.2524 6.10653 60.8347 5.73153C60.42 5.35369 60.2126 4.85227 60.2126 4.22727C60.2126 3.71307 60.3518 3.26278 60.6302 2.87642C60.9114 2.49006 61.2935 2.19034 61.7765 1.97727C62.2595 1.76136 62.8063 1.65341 63.4171 1.65341C64.0364 1.65341 64.5791 1.76136 65.045 1.97727C65.5137 2.19034 65.8816 2.48722 66.1487 2.8679C66.4157 3.24574 66.5535 3.6804 66.562 4.17188H65.0407ZM75.8891 6.13636C75.8891 7.0767 75.7129 7.8821 75.3607 8.55256C75.0112 9.22017 74.534 9.73153 73.9288 10.0866C73.3266 10.4418 72.6433 10.6193 71.8791 10.6193C71.1149 10.6193 70.4303 10.4418 69.8252 10.0866C69.2229 9.72869 68.7456 9.21591 68.3933 8.5483C68.0439 7.87784 67.8692 7.07386 67.8692 6.13636C67.8692 5.19602 68.0439 4.39205 68.3933 3.72443C68.7456 3.05398 69.2229 2.54119 69.8252 2.18608C70.4303 1.83097 71.1149 1.65341 71.8791 1.65341C72.6433 1.65341 73.3266 1.83097 73.9288 2.18608C74.534 2.54119 75.0112 3.05398 75.3607 3.72443C75.7129 4.39205 75.8891 5.19602 75.8891 6.13636ZM74.2996 6.13636C74.2996 5.47443 74.1959 4.91619 73.9885 4.46165C73.784 4.00426 73.4999 3.65909 73.1362 3.42614C72.7726 3.19034 72.3536 3.07244 71.8791 3.07244C71.4047 3.07244 70.9857 3.19034 70.622 3.42614C70.2584 3.65909 69.9729 4.00426 69.7655 4.46165C69.5609 4.91619 69.4587 5.47443 69.4587 6.13636C69.4587 6.7983 69.5609 7.35795 69.7655 7.81534C69.9729 8.26989 70.2584 8.61506 70.622 8.85085C70.9857 9.08381 71.4047 9.20028 71.8791 9.20028C72.3536 9.20028 72.7726 9.08381 73.1362 8.85085C73.4999 8.61506 73.784 8.26989 73.9885 7.81534C74.1959 7.35795 74.2996 6.7983 74.2996 6.13636ZM77.3837 10.5V1.77273H78.9647V9.17472H82.8085V10.5H77.3837ZM91.6391 6.13636C91.6391 7.0767 91.4629 7.8821 91.1107 8.55256C90.7612 9.22017 90.284 9.73153 89.6788 10.0866C89.0766 10.4418 88.3933 10.6193 87.6291 10.6193C86.8649 10.6193 86.1803 10.4418 85.5752 10.0866C84.9729 9.72869 84.4956 9.21591 84.1433 8.5483C83.7939 7.87784 83.6192 7.07386 83.6192 6.13636C83.6192 5.19602 83.7939 4.39205 84.1433 3.72443C84.4956 3.05398 84.9729 2.54119 85.5752 2.18608C86.1803 1.83097 86.8649 1.65341 87.6291 1.65341C88.3933 1.65341 89.0766 1.83097 89.6788 2.18608C90.284 2.54119 90.7612 3.05398 91.1107 3.72443C91.4629 4.39205 91.6391 5.19602 91.6391 6.13636ZM90.0496 6.13636C90.0496 5.47443 89.9459 4.91619 89.7385 4.46165C89.534 4.00426 89.2499 3.65909 88.8862 3.42614C88.5226 3.19034 88.1036 3.07244 87.6291 3.07244C87.1547 3.07244 86.7357 3.19034 86.372 3.42614C86.0084 3.65909 85.7229 4.00426 85.5155 4.46165C85.3109 4.91619 85.2087 5.47443 85.2087 6.13636C85.2087 6.7983 85.3109 7.35795 85.5155 7.81534C85.7229 8.26989 86.0084 8.61506 86.372 8.85085C86.7357 9.08381 87.1547 9.20028 87.6291 9.20028C88.1036 9.20028 88.5226 9.08381 88.8862 8.85085C89.2499 8.61506 89.534 8.26989 89.7385 7.81534C89.9459 7.35795 90.0496 6.7983 90.0496 6.13636Z\" fill=\"#0AB861\"/>\n<defs>\n<clipPath id=\"clip0_5805_55291\">\n<rect width=\"54.874\" height=\"10.4242\" fill=\"white\" transform=\"translate(0.562988 0.787872)\"/>\n</clipPath>\n<clipPath id=\"clip1_5805_55291\">\n<rect width=\"14.5949\" height=\"10.4242\" fill=\"white\" transform=\"translate(0.562988 0.787872)\"/>\n</clipPath>\n<clipPath id=\"clip2_5805_55291\">\n<rect width=\"35.2321\" height=\"9.18536\" fill=\"white\" transform=\"translate(20.2048 1.50092)\"/>\n</clipPath>\n</defs>\n</svg>"};
+              const cancelDark = `<svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_5993_243)">
+<path d="M0.437012 7.5C0.437012 3.35786 3.79488 0 7.93701 0C12.0791 0 15.437 3.35786 15.437 7.5C15.437 11.6421 12.0791 15 7.93701 15C3.79488 15 0.437012 11.6421 0.437012 7.5Z" fill="#EDEFF2"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.93698 1.34036C11.3391 1.34036 14.0966 4.09792 14.0966 7.5C14.0966 10.9021 11.3391 13.6596 7.93698 13.6596C4.53491 13.6596 1.77734 10.9021 1.77734 7.5C1.77734 4.09792 4.53491 1.34036 7.93698 1.34036Z" fill="#111214"/>
+<path d="M7.93717 6.70886L9.40826 5.23776L9.80383 4.84128L10.5959 5.63334L10.1994 6.02891L8.72831 7.5L10.1994 8.9711L10.5959 9.36667L9.80383 10.1587L9.40826 9.76224L7.93717 8.29115L6.46607 9.76224L6.0705 10.1587L5.27844 9.36667L5.67493 8.9711L7.14602 7.5L5.67493 6.02891L5.27844 5.63334L6.0705 4.84128L6.46607 5.23776L7.93717 6.70886Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_5993_243">
+<path d="M0.437012 7.5C0.437012 3.35786 3.79488 0 7.93701 0C12.0791 0 15.437 3.35786 15.437 7.5C15.437 11.6421 12.0791 15 7.93701 15C3.79488 15 0.437012 11.6421 0.437012 7.5Z" fill="white"/>
+</clipPath>
+</defs>
+</svg>`;
+              const cancelLight = `<svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_5993_279)">
+<path d="M0.437012 7.5C0.437012 3.35786 3.79488 0 7.93701 0C12.0791 0 15.437 3.35786 15.437 7.5C15.437 11.6421 12.0791 15 7.93701 15C3.79488 15 0.437012 11.6421 0.437012 7.5Z" fill="#2A2D31"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.93698 1.34036C11.3391 1.34036 14.0966 4.09792 14.0966 7.5C14.0966 10.9021 11.3391 13.6596 7.93698 13.6596C4.53491 13.6596 1.77734 10.9021 1.77734 7.5C1.77734 4.09792 4.53491 1.34036 7.93698 1.34036Z" fill="white"/>
+<path d="M7.93717 6.70886L9.40826 5.23776L9.80383 4.84128L10.5959 5.63334L10.1994 6.02891L8.72831 7.5L10.1994 8.9711L10.5959 9.36667L9.80383 10.1587L9.40826 9.76224L7.93717 8.29115L6.46607 9.76224L6.0705 10.1587L5.27844 9.36667L5.67493 8.9711L7.14602 7.5L5.67493 6.02891L5.27844 5.63334L6.0705 4.84128L6.46607 5.23776L7.93717 6.70886Z" fill="black"/>
+</g>
+<defs>
+<clipPath id="clip0_5993_279">
+<path d="M0.437012 7.5C0.437012 3.35786 3.79488 0 7.93701 0C12.0791 0 15.437 3.35786 15.437 7.5C15.437 11.6421 12.0791 15 7.93701 15C3.79488 15 0.437012 11.6421 0.437012 7.5Z" fill="white"/>
+</clipPath>
+</defs>
+</svg>`;
+              const shareIcon = `<svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M5.68693 2.33333H2.77026V11.6667H12.1036V8.75M8.6036 2.33333H12.1036V5.83333M6.8536 7.58333L11.5203 2.91666" 
+        stroke="currentColor" stroke-width="1.05" stroke-linecap="square"/>
+</svg>`;
+              
+              
+          // 主题选择函数 (复用�?theme.ts)
+          function getLuminance(r, g, b) {
+            return 0.299 * r + 0.587 * g + 0.114 * b;
+          }
+          
+          function parseColor(color) {
+            const rgbaMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d.]+)?\)/);
+            if (rgbaMatch) {
+              return [parseInt(rgbaMatch[1]), parseInt(rgbaMatch[2]), parseInt(rgbaMatch[3])];
+            }
+            
+            const hexMatch = color.match(/^#([0-9a-f]{6})$/i);
+            if (hexMatch) {
+              const hex = hexMatch[1];
+              return [
+                parseInt(hex.substr(0, 2), 16),
+                parseInt(hex.substr(2, 2), 16),
+                parseInt(hex.substr(4, 2), 16)
+              ];
+            }
+            
+            const hexShortMatch = color.match(/^#([0-9a-f]{3})$/i);
+            if (hexShortMatch) {
+              const hex = hexShortMatch[1];
+              return [
+                parseInt(hex[0] + hex[0], 16),
+                parseInt(hex[1] + hex[1], 16),
+                parseInt(hex[2] + hex[2], 16)
+              ];
+            }
+            
+            return null;
+          }
+          
+          function detectBackgroundColor(element) {
+            let targetElement;
+            
+            if (typeof element === 'string') {
+              const found = document.querySelector(element);
+              console.debug('Target element found:', found);
+              if (!found) return 'rgb(255, 255, 255)';
+              targetElement = found;
+            } else if (element) {
+              targetElement = element;
+            } else {
+              targetElement = document.body;
+            }
+            
+            let currentElement = targetElement;
+            
+            while (currentElement && currentElement !== document.documentElement) {
+              const computedStyle = window.getComputedStyle(currentElement);
+              const backgroundColor = computedStyle.backgroundColor;
+              
+              console.debug('Checking element:', currentElement.tagName, currentElement.id, currentElement.className);
+              console.debug('Background color:', backgroundColor);
+              
+              if (backgroundColor && backgroundColor !== 'rgba(0, 0, 0, 0)' && backgroundColor !== 'transparent') {
+                console.debug('Found background color:', backgroundColor, 'on element:', currentElement);
+                return backgroundColor;
+              }
+              
+              currentElement = currentElement.parentElement;
+            }
+            
+            const bodyStyle = window.getComputedStyle(document.body);
+            const bodyBackground = bodyStyle.backgroundColor;
+            console.debug('Body background:', bodyBackground);
+            if (bodyBackground && bodyBackground !== 'rgba(0, 0, 0, 0)' && bodyBackground !== 'transparent') {
+              return bodyBackground;
+            }
+            
+            const htmlStyle = window.getComputedStyle(document.documentElement);
+            const htmlBackground = htmlStyle.backgroundColor;
+            console.debug('HTML background:', htmlBackground);
+            if (htmlBackground && htmlBackground !== 'rgba(0, 0, 0, 0)' && htmlBackground !== 'transparent') {
+              return htmlBackground;
+            }
+            
+            console.debug('No background found, returning default white');
+            return 'rgb(255, 255, 255)';
+          }
+          
+          function autoSelectTheme(container) {
+            const backgroundColor = detectBackgroundColor(container);
+            const rgb = parseColor(backgroundColor);
+            
+            console.debug('TRAE Badge Plugin - Background detection:', {
+              container,
+              backgroundColor,
+              rgb
+            });
+            
+            if (!rgb) {
+              console.debug('TRAE Badge Plugin - No RGB found, using dark theme');
+              return 'dark';
+            }
+            
+            const [r, g, b] = rgb;
+            const luminance = getLuminance(r, g, b);
+            const selectedTheme = luminance > 128 ? 'dark' : 'light';
+            
+            console.debug('TRAE Badge Plugin - Theme selection:', {
+              luminance,
+              selectedTheme,
+              reason: luminance > 128 ? 'Light background -> Dark badge' : 'Dark background -> Light badge'
+            });
+            
+            return selectedTheme;
+          }
+        
+              
+              // 注入样式
+              const style = document.createElement('style');
+              style.id = 'trae-badge-plugin-styles';
+              style.textContent = css;
+              document.head.appendChild(style);
+              
+              // 创建 Badge 函数
+              function createBadge() {
+                // 移除已存在的 badge
+                const existingBadge = document.getElementById('trae-badge-plugin');
+                if (existingBadge) {
+                  existingBadge.remove();
+                }
+                
+                // 确定主题
+                let variant = 'dark';
+                if (true) {
+                  variant = autoSelectTheme('#root');
+                }
+                
+                const isDarkBackground = variant === 'dark';
+                const logoType = isDarkBackground ? 'light' : 'dark';
+                const cancelIcon = isDarkBackground ? cancelLight : cancelDark;
+                
+                const badge = document.createElement('div');
+                badge.id = 'trae-badge-plugin';
+                badge.className = `trae-badge trae-badge--${variant} trae-badge--bottom-right`;
+                badge.innerHTML = `
+                  <div class="trae-badge-content">
+                    <div class="trae-badge-logo">${logos[logoType]}</div>
+                    <div class="trae-badge-share">${shareIcon}</div>
+                  </div>
+                  <div class="trae-badge-cancel">${cancelIcon}</div>
+                `;
+                
+                // 添加点击事件
+                
+                badge.style.cursor = 'pointer';
+                badge.addEventListener('click', (e) => {
+                  if (e.target.closest('.trae-badge-cancel')) return;
+                  window.open('https://www.trae.ai/solo?showJoin=1', '_blank');
+                });
+                
+                
+                // 添加取消按钮事件
+                const cancelButton = badge.querySelector('.trae-badge-cancel');
+                if (cancelButton) {
+                  cancelButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    badge.remove();
+                  });
+                }
+                
+                document.body.appendChild(badge);
+                return badge;
+              }
+              
+              // 初始创建 badge
+              // 等待 React 组件渲染完成后再创建 badge
+              function initBadge() {
+                // 使用 requestAnimationFrame 等待渲染完成
+                requestAnimationFrame(() => {
+                  // 再次检查目标元素是否存�?                  const targetElement = document.querySelector('#root');
+                  if (targetElement) {
+                    const badge = createBadge();
+                  } else {
+                    // 如果还没有找到，等待一段时间再�?                    setTimeout(() => {
+                      const badge = createBadge();
+                    }, 500);
+                  }
+                });
+              }
+              
+              if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initBadge);
+              } else {
+                // DOM 已经加载完成，但 React 可能还没渲染
+                initBadge();
+              }
+              
+              window.TraeBadgePlugin = { 
+                destroy: () => {
+                  const badge = document.getElementById('trae-badge-plugin');
+                  if (badge) badge.remove();
+                  style.remove();
+                  delete window.TraeBadgePlugin;
+                },
+                recreate: createBadge
+              };
+            })();
+          </script>
+        
 </body>
 </html>
